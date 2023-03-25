@@ -21,7 +21,7 @@ export default function App() {
 
   useEffect(() => {
     try {
-      loadData() 
+      loadData()
     } catch (error) {
       setCoins([{id: 0, name: error.message}])
     }
