@@ -1,32 +1,44 @@
-import { useContext } from "react"
-import {View, Text} from "react-native"
-import {CryptoContext} from "../context/CryptoContext"
+import { useContext, useEffect, useState } from "react";
+import { View, Text, Alert } from "react-native";
+import { CryptoContext } from "../context/CryptoContext";
 
-import Chart from "./Chart"
+import Chart from "./Chart";
 
 const ChartContainer = () => {
+  const { crypto, label, max } = useContext(CryptoContext);
 
-    const {crypto} = useContext(CryptoContext)
+  const data = {
+    datasets: [
+      {
+        data: max,
+        color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
+        strokeWidth: 2, // optional
+      },
+    ],
+    legend: [`Flujo de valores de ${crypto.name})`], // optional
+  };
 
-    console.log(crypto)
+  return (
+    <View
+      style={{
+        width: "100%",
+        height: "50%",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {crypto.name !== "" ? (
+        <>
+          <Text>{crypto.name}</Text>
+          {
+            max.length > 0 ? <Chart data={data} /> : <></>
+          }
+        </>
+      ) : (
+        <Text>Seleccione una criptomoneda para continuar</Text>
+      )}
+    </View>
+  );
+};
 
-    const data = {
-      labels: ["January", "February", "March", "April", "May", "June"],
-      datasets: [
-        {
-          data: [20, 45, 28, 80, 99, 43],
-          color: (opacity = 1) => `rgba(134, 65, 244, ${opacity})`, // optional
-          strokeWidth: 2 // optional
-        }
-      ],
-      legend: ["Rainy Days"] // optional
-    }
-
-    return (<View style={{width: "100%", height: "50%", alignItems: "center", justifyContent: "center"}}>
-        <Text>{crypto.name === "" ? "Seleccione una criptomoneda." : crypto.name}</Text>
-
-        <Chart data={data} />
-    </View>)
-}
-
-export default ChartContainer
+export default ChartContainer;
