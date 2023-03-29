@@ -3,7 +3,7 @@ import {View, Text, Image, TouchableHighlight, Alert} from "react-native"
 import { CryptoContext } from "../context/CryptoContext"
 import styles from "../utils/styles"
 
-const Card = ({title, url, id}) => {
+const Card = ({title, url, id, price}) => {
 
     const {setCrypto, setLabel, setMax} = useContext(CryptoContext)
 
@@ -11,18 +11,21 @@ const Card = ({title, url, id}) => {
         let Max = []
         let Time = []
     
-        const res = await fetch(`https://api.coingecko.com/api/v3/coins/${id}/ohlc?vs_currency=usd&days=7`)
-        console.log(res.ok)
+        const res = await fetch(`https://api.coincap.io/v2/assets/${id}/history?interval=d1`)
+        //console.log(res.ok)
         if (res.ok) {
           const data = await res.json()
 
-          data.forEach(element => {
-            Time.push(new Date(element[0]))
-            Max.push(element[2])
+          data["data"].forEach(element => {
+            Time.push(new Date(element["time"]))
+            Max.push(element["priceUsd"])
           });
-    
+
+          console.log(data["data"])
+          
           setLabel(Time)
           setMax(Max)
+
         } else {
           throw new Error(`[STATUS CODE ${res.status}] => Límite de peticiones superados.`)
         }
@@ -43,6 +46,7 @@ const Card = ({title, url, id}) => {
     }
 
     const handleTouch = () => {
+        console.log(id)
         setCrypto({
             name: title,
             url,
@@ -53,8 +57,11 @@ const Card = ({title, url, id}) => {
 
     return (<TouchableHighlight underlayColor="white" onPress={handleTouch}>
         <View style={styles.card}>
-            <Image style={styles.cardImage} source={{uri: url}} />
+            {
+              url && <Image style={styles.cardImage} source={{uri: url}} />
+            }
             <Text>{title}</Text>
+            <Text>{price}</Text>
         </View>
     </TouchableHighlight>
     )

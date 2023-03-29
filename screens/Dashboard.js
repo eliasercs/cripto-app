@@ -11,13 +11,16 @@ const Dashboard = () => {
 
   async function loadData() {
     const res = await fetch(
-      "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=5&page=1&sparkline=false"
+      "https://api.coincap.io/v2/assets"
     );
     if (!res.ok) {
       throw new Error("Error al realizar petición.");
     }
     const data = await res.json();
-    setCoins(data);
+
+    //console.log(data["data"])
+
+    setCoins(data["data"]);
   }
 
   useEffect(() => {
@@ -41,7 +44,7 @@ const Dashboard = () => {
           horizontal={true}
           data={coins}
           renderItem={({ item }) => (
-            <Card title={item.name} url={item.image} id={item.id} />
+            <Card title={item.name} id={item.id} price={Math.round(item.priceUsd)} />
           )}
           keyExtractor={(item) => item.id}
         />
